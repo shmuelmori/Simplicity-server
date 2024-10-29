@@ -267,7 +267,9 @@ const login = async (req: Request, res: Response) => {
     const token = createToken(user._id);
     res.cookie('token', token, {
       httpOnly: true,
-      maxAge: 60 * 60 * 1000
+      maxAge: 60 * 60 * 1000,
+      sameSite: 'none',     // Add this
+      secure: true,
     });
     const response = buildResponse(true, 'Login successful', null, null, user);
     res.status(200).json(response);
@@ -292,7 +294,9 @@ const loginWithGoogle = async (req: Request, res: Response) => {
 
     res.cookie('token', token, {
       httpOnly: true,
-      maxAge: 60 * 60 * 1000
+      maxAge: 60 * 60 * 1000,
+      sameSite: 'none',     // Add this
+      secure: true,
     });
     const response = buildResponse(true, 'Login successful', null, null, user)
     res.status(200).json(response);
