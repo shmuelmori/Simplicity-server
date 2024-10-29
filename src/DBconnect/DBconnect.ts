@@ -4,10 +4,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const connectDB = async () => {
-    try{
-        await mongoose.connect(`${process.env.DB_CONNECT || 5000}`);
+    try {
+        await mongoose.connect(process.env.DB_CONNECT!);
         console.log('MongoDB connected...');
-    }catch(err){
+    } catch (err) {
+        console.log(err)
         console.error('Error connecting to MongoDB');
     }
 }
