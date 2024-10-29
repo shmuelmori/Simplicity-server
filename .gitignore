@@ -21,6 +21,6 @@ Thumbs.db
 
 request.http
 package-lock.json
-.env
+# .env
 
 
