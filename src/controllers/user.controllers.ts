@@ -266,11 +266,9 @@ const login = async (req: Request, res: Response) => {
     };
     const token = createToken(user._id);
     res.cookie('token', token, {
-      domain: "https://simplicity-project.netlify.app",
-      path: '/',
       httpOnly: true,
       maxAge: 60 * 60 * 1000,
-      sameSite: 'none',
+      sameSite: 'none',     // Add this
       secure: true,
     });
     const response = buildResponse(true, 'Login successful', null, null, user);
@@ -295,11 +293,9 @@ const loginWithGoogle = async (req: Request, res: Response) => {
     const token = createToken(user._id);
 
     res.cookie('token', token, {
-      domain: "https://simplicity-project.netlify.app",
-      path: '/',
       httpOnly: true,
       maxAge: 60 * 60 * 1000,
-      sameSite: 'none',
+      sameSite: 'none',     // Add this
       secure: true,
     });
     const response = buildResponse(true, 'Login successful', null, null, user)
