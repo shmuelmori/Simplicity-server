@@ -9,7 +9,6 @@ import { generateOTP } from '../utils/helper';
 import { sendEmail } from '../utils/helper';
 import { saveOTPToDB } from '../utils/helper';
 import OTPModel from '../models/otp.schema'
-import { stringify } from 'querystring';
 
 // שליפת כל המשתמשים ושליחה לאדמין
 const getAllUsers = async (req: Request, res: Response): Promise<void> => {
@@ -137,7 +136,6 @@ const updateUser = async (req: Request, res: Response) => {
 
     // החזרת המשתמש המעודכן בתגובה
     const response = buildResponse(true, 'User successfully updated', null, null, user);
-
     res.status(200).json(response);
 
   } catch (err) {

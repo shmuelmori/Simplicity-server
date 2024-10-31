@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, createUser, searchUsers, updateUser, deleteUserByEmail, exportUsers, login, logout, loginWithGoogle, getOneUser,  otpService, verifyOTP } from '../controllers/user.controllers';
+import { getAllUsers, createUser, searchUsers, updateUser, deleteUserByEmail, exportUsers, login, logout, loginWithGoogle, getOneUser, otpService, verifyOTP } from '../controllers/user.controllers';
 import { authMiddleware } from '../middlewares/middel'
 
 
@@ -15,7 +15,7 @@ userRouter.post('/otpService', otpService);
 userRouter.post('/verifyOTP', verifyOTP);
 
 userRouter.get('/getAllUsers', authMiddleware, getAllUsers);
-userRouter.patch('/updateUser', authMiddleware, updateUser);
+userRouter.post('/updateUser', authMiddleware, updateUser);
 userRouter.get('/searchUser/:text', authMiddleware, searchUsers);
 userRouter.delete("/deleteUser/:email", authMiddleware, deleteUserByEmail);
 userRouter.post('/export', authMiddleware, exportUsers);

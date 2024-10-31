@@ -24,6 +24,8 @@ const tsakSchema: Schema = new Schema({
         type: String,
         required: true
     }
+}, {
+    timestamps: true
 });
 
 const Task = mongoose.model<ITask>('Tsak', tsakSchema);
