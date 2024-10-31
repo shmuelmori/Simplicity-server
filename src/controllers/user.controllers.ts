@@ -380,6 +380,7 @@ const otpService = async (req: Request, res: Response) => {
     }
 
 
+
     const response = buildResponse(true, 'OTP sent to email', null, null, null);
     res.status(200).json(response);
 
@@ -404,6 +405,23 @@ const verifyOTP = async (req: Request, res: Response) => {
       res.status(400).json(response);
       return;
     }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      const response = buildResponse(false, 'User does not found', null, null, null);
+      res.status(401).json(response);
+      return;
+    }
+
+    const token = createToken(user._id);
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
+      sameSite: 'none',     // Add this
+      secure: true,
+    });
 
     // בדוק אם ה-OTP עדיין בתוקף
     if (Date.now() > otpRecord.expiresAt.getTime()) {
