@@ -232,7 +232,7 @@ export const searchTask = async (req: Request, res: Response) => {
         if (!matchesTasks || matchesTasks.length === 0) {
             throw new Error("There are no matching tasks");
         }
-        
+
         const response = buildResponse(true, 'Search tasks successfully', null, null, matchesTasks);
         res.status(200).json(response);
 
@@ -347,6 +347,35 @@ export const getUsersWithTask = async (req: Request, res: Response) => {
 
     } catch (err) {
         const response = buildResponse(false, 'Failed to retrieve users', null, err instanceof Error ? err.message : 'Unknown error', null);
+        res.status(500).json(response);
+    }
+};
+
+export const getUserTasks = async (req: Request, res: Response) => {
+    const { _id } = req.params; // Assuming _id is the user ID
+
+    if (!_id) {
+        const response = buildResponse(false, "User ID is not valid", null, null);
+        res.status(400).send(response);
+        return;
+    }
+
+    try {
+        const user = await User.findById(_id);
+        if (!user) {
+            const response = buildResponse(false, "User not found", null, null);
+            res.status(404).send(response);
+            return;
+        }
+
+        const tasks = await Task.find({ _id: { $in: user.workSpaceList } });
+
+        const response = buildResponse(true, "Tasks retrieved successfully", null, null, tasks);
+        res.status(200).send(response);
+    } catch (error) {
+        const response = buildResponse(
+            false, 'Failed to retrieve tasks', null, error instanceof Error ? error.message : 'Unknown error', null
+        );
         res.status(500).json(response);
     }
 };
