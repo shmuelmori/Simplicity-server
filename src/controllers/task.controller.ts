@@ -380,4 +380,33 @@ export const getUserTasks = async (req: Request, res: Response) => {
     }
 };
 
+export const getTasksByProjectId = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+
+    try {
+        const groups = await Group.find({ projectId }).exec();
+
+        const groupIds = groups.map(group => group._id);
+
+        const tasks = await Task.find({ groupId: { $in: groupIds } }).exec();
+
+        if (tasks.length === 0) {
+            const response = buildResponse(false, 'No tasks found for this project', null, null, null);
+            res.status(404).json(response);
+            return;
+        }
+
+        const taskDetails = tasks.map(task => ({
+            duration: task.duration,
+            status: task.status,
+        }));
+
+        const response = buildResponse(true, 'Tasks found successfully', null, null, taskDetails);
+        res.status(200).json(response);
+    } catch (error) {
+        const response = buildResponse(false, 'Failed to get tasks', null, error instanceof Error ? error.message : 'Unknown error', null);
+        res.status(500).json(response);
+    }
+};
+
 
