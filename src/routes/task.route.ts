@@ -13,7 +13,7 @@ taskRouter.get('/getTaskByUser/:_id', getTaskByUser);
 taskRouter.post('/assignTaskToUser', assignTaskToUser);
 taskRouter.get('/usersWithTask/:taskId', getUsersWithTask);
 taskRouter.get('/getUserTasks/:_id', getUserTasks);
-taskRouter.get('/getTasksByProjectId/:_id', getTasksByProjectId);
+taskRouter.get('/getTasksByProjectId/:projectId', getTasksByProjectId);
 
 
 

@@ -396,9 +396,18 @@ export const getTasksByProjectId = async (req: Request, res: Response) => {
             return;
         }
 
-        const taskDetails = tasks.map(task => ({
-            duration: task.duration,
-            status: task.status,
+        const durationByStatus: { [key: string]: number } = {};
+
+        tasks.forEach(task => {
+            if (!durationByStatus[task.status]) {
+                durationByStatus[task.status] = 0;
+            }
+            durationByStatus[task.status] += task.duration;
+        });
+
+        const taskDetails = Object.entries(durationByStatus).map(([status, duration]) => ({
+            duration,
+            status,
         }));
 
         const response = buildResponse(true, 'Tasks found successfully', null, null, taskDetails);
@@ -408,5 +417,7 @@ export const getTasksByProjectId = async (req: Request, res: Response) => {
         res.status(500).json(response);
     }
 };
+
+
 
 
