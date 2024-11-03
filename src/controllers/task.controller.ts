@@ -383,40 +383,79 @@ export const getUserTasks = async (req: Request, res: Response) => {
 export const getTasksByProjectId = async (req: Request, res: Response) => {
     const { projectId } = req.params;
 
+    // Define all possible statuses
+    const allStatuses = ['TO DO', 'IN PROGRESS', 'COMPLETE'];
+
     try {
         const groups = await Group.find({ projectId }).exec();
-
         const groupIds = groups.map(group => group._id);
-
         const tasks = await Task.find({ groupId: { $in: groupIds } }).exec();
 
-        if (tasks.length === 0) {
-            const response = buildResponse(false, 'No tasks found for this project', null, null, null);
-            res.status(404).json(response);
-            return;
-        }
-
+        // Initialize duration for all statuses with 0
         const durationByStatus: { [key: string]: number } = {};
+        allStatuses.forEach(status => {
+            durationByStatus[status] = 0;
+        });
 
         tasks.forEach(task => {
-            if (!durationByStatus[task.status]) {
-                durationByStatus[task.status] = 0;
-            }
             durationByStatus[task.status] += task.duration;
         });
 
-        const taskDetails = Object.entries(durationByStatus).map(([status, duration]) => ({
-            duration,
+        const taskDetails = allStatuses.map(status => ({
+            duration: durationByStatus[status],
             status,
         }));
 
-        const response = buildResponse(true, 'Tasks found successfully', null, null, taskDetails);
+        const response = buildResponse(true, tasks.length === 0 ? 'No tasks found for this project' : 'Tasks found successfully', null, null, taskDetails
+        );
+
         res.status(200).json(response);
+        return;
+
     } catch (error) {
-        const response = buildResponse(false, 'Failed to get tasks', null, error instanceof Error ? error.message : 'Unknown error', null);
+        const response = buildResponse(false, 'Failed to get tasks', null, error instanceof Error ? error.message : 'Unknown error', null
+        );
         res.status(500).json(response);
     }
 };
+
+// export const getTasksByProjectId = async (req: Request, res: Response) => {
+//     const { projectId } = req.params;
+
+//     try {
+//         const groups = await Group.find({ projectId }).exec();
+
+//         const groupIds = groups.map(group => group._id);
+
+//         const tasks = await Task.find({ groupId: { $in: groupIds } }).exec();
+
+//         if (tasks.length === 0) {
+//             const response = buildResponse(false, 'No tasks found for this project', null, null, null);
+//             res.status(404).json(response);
+//             return;
+//         }
+
+//         const durationByStatus: { [key: string]: number } = {};
+
+//         tasks.forEach(task => {
+//             if (!durationByStatus[task.status]) {
+//                 durationByStatus[task.status] = 0;
+//             }
+//             durationByStatus[task.status] += task.duration;
+//         });
+
+//         const taskDetails = Object.entries(durationByStatus).map(([status, duration]) => ({
+//             duration,
+//             status,
+//         }));
+
+//         const response = buildResponse(true, 'Tasks found successfully', null, null, taskDetails);
+//         res.status(200).json(response);
+//     } catch (error) {
+//         const response = buildResponse(false, 'Failed to get tasks', null, error instanceof Error ? error.message : 'Unknown error', null);
+//         res.status(500).json(response);
+//     }
+// };
 
 
 
